@@ -4,8 +4,9 @@ Repositório destinado ao estudo da disciplina Banco de dados da pós em java da
 - [link do repositório](https://github.com/Cyber-Barbarian/backend-categoria-musica-si)
 
 # Atividade projeto Spring JPA
-- O Diagrama ER do projeto está em: [diagramaER](src\main\resources\static\diagrama_ER.png)
+- O Diagrama ER do projeto está em: [diagramaER](src/main/resources/static/diagrama_ER.png)
  
+# Inicializando o projeto
 ## Gerando os projeto Spring Initializr
 
 1. Acesse o site oficial do Spring Initializr em https://start.spring.io.
@@ -51,7 +52,7 @@ Repositório destinado ao estudo da disciplina Banco de dados da pós em java da
 # Implementar configuração programática
 - clicckameos com o direito no pacote raiz do seu projeto -> New -> Package
 - vamos criar o pacote **config** de forma que tenhamos **“com.utfpr.backendcategoriamusicasi.config”**
-- nele sera criada nossa classe de configuração (direito config -> new -> class, nome [**SpringDataConfig**](src\main\java\com\utfpr\backendcategoriamusicasi\config\SpringDataConfig.java))
+- nele sera criada nossa classe de configuração (direito config -> new -> class, nome [**SpringDataConfig**](src/main/java/com/utfpr/backendcategoriamusicasi/config/SpringDataConfig.java))
 - vamos aplicar as tags **@Configuration** e **@EnableJpaRepositories(<path>)** e o **@EnableTransactionManagement**
 - aplicar  conexão **dataSource()**, nesse caso com o **H2**
 - obs: pode ser necessário adicionar ao pom.xml
@@ -71,5 +72,44 @@ Repositório destinado ao estudo da disciplina Banco de dados da pós em java da
 - Vamos fazer o mesmo processo com a classe [Musica](src/main/java/com/utfpr/backendcategoriamusicasi/entity/Musica.java), implementando a chave estrangeira em **cod_categoria**
 - Repare na classe música que a notação @Column foi omitida para duracao, pois alem de ter o mesmo nome da variável ela poderá ser nula e não tem limite de tamanho
 - Repare também na criação da variável **codCategoria** como chave estrangeira
-- 
 
+# Implementando Repository e Service
+## Implementando o Repository
+- A camada de repository em um projeto Spring Data JPA tem a responsabilidade de abstrair o acesso aos dados e fornecer métodos de alto nível para realizar operações de persistência e consulta no banco de dados.
+- Atua como uma interface entre a camada de serviço (ou de negócios) e o mecanismo de persistência (banco de dados), encapsulando a lógica de acesso aos dados e fornecendo métodos que são utilizados pela camada de serviço para interagir com as entidades do domínio.
+- As principais funções da camada de repository são:
+```
+Abstração do acesso aos dados: acultação de detalhes de como os dados são armazenados e consultados no banco de dados. 
+Definição de operações de consulta: define métodos que podem ser personalizados para realizar operações de consulta no banco de dados. 
+Herança de recursos do Spring Data JPA:A camada de repository pode estender as interfaces CrudRepository, JpaRepository e PagingAndSortingRepository para herdar recursos prontos para uso.
+Implementação de consultas personalizadas: a camada de repository pode incluir métodos personalizados para consultas específicas do domínio. Por exemplo consultas com anotações @Query , ou também consultas dinâmicas com o uso de Criteria, Example ou Specifications.
+Suporte a transações: a tag @Transactional garante a consistência dos dados e a atomicidade das operações.
+```
+### Etapas para criar a interface repository:
+- Pacote raiz do seu projeto->New->Package teremos algo como [**com.utfpr.backendcategoriamusicasi.repository**](src/main/java/com/utfpr/backendcategoriamusicasi/repository), onde iremos alocar nossas interfaces
+- Em repository New->Java Class->Interface com o nome [**CategoriaRepository**](src/main/java/com/utfpr/backendcategoriamusicasi/repository/CategoriaRepository.java)
+- Estender o JpaRepository e fazer as importações necessárias
+```
+extends JpaRepository <"ClasseReferência","TipoDeDadoNoId">
+```
+- Fazer o mesmo para [**MusicaRepository**](src/main/java/com/utfpr/backendcategoriamusicasi/repository/MusicaRepository.java)
+
+## Implementando o Service
+- A camada de serviço (@Service) em um projeto Spring Data JPA tem a responsabilidade de encapsular a lógica de negócios e coordenar as operações entre a camada de controle (Controller) e a camada de acesso aos dados (Repository).
+- Algumas das funções da camada de serviço são:
+```
+Coordenação das operações: Orquestra a execução das operações de negócio, geralmente envolvendo múltiplas operações de acesso a dados.
+Validação de dados: Garante a integridade dos dados. Pode incluir validações de campos obrigatórios, formatos, restrições de negócio, entre outros.
+Transformação de dados: Realiza tanto a conversão dos objetos de transferência de dados (DTO) para serem processados pelas operações de negócio.E também realiza a conversão inversa.
+Transações: Definir métodos transacionais usando a anotação @Transactional, garantindo que um conjunto de operações de negócio seja executado de forma atômica e consistente.
+Exposição de serviços: A camada de serviço expõe uma interface para a camada de controle, definindo métodos que encapsulam as operações de negócio disponíveis para serem consumidas pelos clientes da aplicação.
+```
+- Sendo assim, a camada de serviço **(@Service)** é responsável por encapsular a lógica de negócios, coordenar as operações entre a camada de controle e a camada de acesso aos dados, realizar validações, transformações de dados e garantir a consistência e atomicidade das operações por meio do controle de transações.
+
+### Etapas para criar a classe Service (@Service):
+- Pacote raiz do seu projeto -> New -> Package teremos algo como [**com.utfpr.backendcategoriamusicasi.service**](src/main/java/com/utfpr/backendcategoriamusicasi/service)
+- Dentro do novo pacote, vamos criar a classe [**CategoriaService**](src/main/java/com/utfpr/backendcategoriamusicasi/service/CategoriaService.java)
+- Devemos inserir a anotação @Service para transformar essa classe em um bean gerenciável pelo spring
+- Criamos uma variável para o repositório de categoria, do tipo **CategoriaRepository** , inserindo também a anotação @Autowired, para implementar a injeção de dependência do repository.
+- Vamos implementar um método teste para testar o acesso ao repositório.
+- Implementamos da mesma forma um serviço para a categoria Musica [**MusicaService**](src/main/java/com/utfpr/backendcategoriamusicasi/service/MusicaService.java)
