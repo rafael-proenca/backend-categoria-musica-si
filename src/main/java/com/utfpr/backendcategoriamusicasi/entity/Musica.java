@@ -16,7 +16,7 @@ public class Musica {
 
     @ManyToOne
     @JoinColumn(name = "cod_categoria", nullable = false)
-    private Long codCategoria;
+    private Categoria codCategoria;
 
     private int duracao;
 
