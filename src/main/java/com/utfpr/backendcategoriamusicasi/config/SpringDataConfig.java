@@ -3,6 +3,7 @@ package com.utfpr.backendcategoriamusicasi.config;
 import com.zaxxer.hikari.HikariDataSource;
 import jakarta.persistence.EntityManagerFactory;
 import org.hibernate.Hibernate;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -21,10 +22,19 @@ public class SpringDataConfig {
 
     public DataSource dataSource(){
         HikariDataSource ds = new HikariDataSource();
+        //DataSourceBuilder ds = DataSourceBuilder.create();
         ds.setUsername("root");
+
+        ds.setPassword("123");
+        ds.setJdbcUrl("jdbc:mariadb://localhost:3306/dml");
+        ds.setDriverClassName("org.mariadb.jdbc.Driver");
+
+/*
         ds.setPassword("senharoot");
         ds.setJdbcUrl("jdbc:h2:mem:testdb");
         ds.setDriverClassName("org.h2.Driver");
+
+ */
 
         return ds;
     }

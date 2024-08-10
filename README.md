@@ -211,3 +211,86 @@ public class BackendCategoriaMusicaSiApplication {
 ```
 
 - Ao rodar serão listados todos os objetos
+
+## Apostila - Criando stored procedures no MariaDB
+
+Abaixo seguem algumas razões de utilizar uma stored procedure:
+- Performance: Stored procedures podem melhorar o desempenho da aplicação,
+especialmente quando há consultas complexas que são executadas repetidamente.
+Como a stored procedure é armazenada no banco de dados, ela pode ser pré-compilada
+e otimizada pelo sistema de gerenciamento de banco de dados (SGBD), resultando em
+execuções mais rápidas.
+- Segurança: Stored procedures podem ser usadas para controlar o acesso aos dados no
+banco de dados. Você pode conceder permissões específicas aos usuários para
+executarem apenas determinadas stored procedures em vez de permitir acesso direto
+às tabelas.
+- Manutenção: Ao usar stored procedures, você centraliza a lógica de negócios no banco
+de dados, o que pode tornar a manutenção e a evolução do sistema mais fáceis, pois
+alterações na lógica podem ser feitas no banco de dados sem a necessidade de modificar
+o código da aplicação.
+- Reutilização de código: Stored procedures podem ser reutilizadas em várias partes da
+aplicação, reduzindo a redundância de código e melhorando a consistência.
+Encapsulamento: Stored procedures permitem encapsular a lógica de negócios e ocultar
+detalhes de implementação do banco de dados para a aplicação. Isso ajuda a separar as
+responsabilidades entre o banco de dados e a aplicação.
+
+**Ponto de atenção**
+No entanto, é importante considerar que a criação de stored procedures pode adicionar
+complexidade ao sistema, e elas podem não ser adequadas para todos os cenários.
+O uso de stored procedures deve ser ponderado em relação aos requisitos do projeto e
+à estrutura da aplicação. Em algumas situações, a implementação da lógica de negócio
+no código da aplicação pode ser mais adequada e mais flexível. A decisão de criar stored
+procedures deve ser tomada com base nas necessidades específicas do projeto e nas
+melhores práticas de desenvolvimento de software.
+Os casos acima são os motivos que resultaram no surgimento desse recurso no banco
+de dados, mas existir não significa ter que usar em todo projeto
+
+## Criando Stored Procedures no MariaDB
+- criamos duas procedures no data.sql[data.sql](src%2Fmain%2Fresources%2Fdata.sql)
+-  Para apagar uma stored procedure, basta usar o comando DROP PROCEDURE <nome_da_procedure>
+- Para executar uma stored procedure através de um script dentro dentro do próprio banco de dados devemos usar CALL <nome_procedure>()
+- no caso chamamos a CALL proc_adicione_tempo(1000);
+- obs as procedures nao funcionam no H2, so no maria DB. copiar e rodar la descomentado. os creates tb
+  https://www.baeldung.com/spring-boot-data-sql-and-schema-sql
+
+## Passo a passo
+- dropar o banco dml no mariaDB
+- rodar no mariaDB  e atualizar
+```sql
+CREATE OR REPLACE schema dml;
+```
+- Rodar a aplicação [BackendCategoriaMusicaSiApplication.java](src%2Fmain%2Fjava%2Fcom%2Futfpr%2Fbackendcategoriamusicasi%2FBackendCategoriaMusicaSiApplication.java)
+- Rodar no mariaDB
+```sql
+USE dml;
+Delimiter $$
+CREATE PROCEDURE proc_adicione_tempo(IN int_valor INT)
+
+BEGIN
+    UPDATE musica
+    SET duracao = duracao + int_valor;
+END $$;
+DELIMITER ;
+
+USE dml;
+Delimiter $$
+CREATE PROCEDURE proc_subtrai_tempo(IN int_valor INT)
+
+BEGIN
+    UPDATE musica
+    SET duracao = duracao -  int_valor;
+END $$;
+DELIMITER ;
+
+USE dml;
+CALL proc_adicione_tempo(1000); 
+select * from musica;
+```
+- em outra aba 
+```sql
+CALL proc_subtrai_tempo(1000); 
+select * from musica;
+```
+Continuar: APOSTILA – IMPLEMENTANDO CHAMADA A
+STORED PROCEDURE
+https://moodle.utfpr.edu.br/course/view.php?id=28404&section=11
