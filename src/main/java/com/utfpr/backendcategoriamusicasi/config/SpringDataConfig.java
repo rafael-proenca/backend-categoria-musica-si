@@ -23,8 +23,8 @@ public class SpringDataConfig {
         HikariDataSource ds = new HikariDataSource();
         ds.setUsername("root");
         ds.setPassword("senharoot");
-        ds.setJdbcUrl("jdbc:h2:mem:teste");
-        ds.setDriverClassName("org.h2.driver");
+        ds.setJdbcUrl("jdbc:h2:mem:testdb");
+        ds.setDriverClassName("org.h2.Driver");
 
         return ds;
     }

@@ -1,3 +1,5 @@
+# https://spring.io/guides/gs/accessing-data-jpa
+
 # backend-categoria-musica-si
 Repositório destinado ao estudo da disciplina Banco de dados da pós em java da UTFPR
 - [link da disciplina](https://github.com/Cyber-Barbarian/estudo-java-utfpr-rafael)
@@ -113,3 +115,99 @@ Exposição de serviços: A camada de serviço expõe uma interface para a camad
 - Criamos uma variável para o repositório de categoria, do tipo **CategoriaRepository** , inserindo também a anotação @Autowired, para implementar a injeção de dependência do repository.
 - Vamos implementar um método teste para testar o acesso ao repositório.
 - Implementamos da mesma forma um serviço para a categoria Musica [**MusicaService**](src/main/java/com/utfpr/backendcategoriamusicasi/service/MusicaService.java)
+
+## data.sql
+- o arquivo data.sql foi inserido na pasta resources. será nossa massa de testes [data.sql](src%2Fmain%2Fresources%2Fdata.sql)
+- passamos a configuração spring.jpa.defer-datasource-initialization=true no applicatio.properties [application.properties](src%2Fmain%2Fresources%2Fapplication.properties)
+- ao rodar a configuração basta acessar http://localhost:8080/h2-console e logar com Username("root"); Password("senharoot");
+- tive um bug e ele estava entrando com usuário default, então alterei o  applicatio.properties [application.properties](src%2Fmain%2Fresources%2Fapplication.properties) para
+```properties
+spring.application.name=backend-categoria-musica-si
+spring.jpa.defer-datasource-initialization=true
+spring.datasource.url=jdbc:h2:mem:testdb
+# Enabling H2 Console
+spring.datasource.driverClassName=org.h2.Driver
+spring.h2.console.enabled=true
+spring.datasource.username=root
+spring.datasource.password=senharoot
+```
+ 
+
+# Apostila - Usando CommandLineRunner e Logger
+
+- Abrir sua classe “Application.java”, normalmente essa classe tem como nome o => nome do projeto + a palavra Application.
+[BackendCategoriaMusicaSiApplication.java](src%2Fmain%2Fjava%2Fcom%2Futfpr%2Fbackendcategoriamusicasi%2FBackendCategoriaMusicaSiApplication.java)
+- Fazer a declaração do atributo log do tipo Logger e efetuar as importações corretamente
+```java
+
+package com.utfpr.backendcategoriamusicasi;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+
+
+@SpringBootApplication
+public class BackendCategoriaMusicaSiApplication {
+
+	private static final Logger log = LoggerFactory.getLogger(BackendCategoriaMusicaSiApplication.class);
+
+	public static void main(String[] args) {
+		SpringApplication.run(BackendCategoriaMusicaSiApplication.class, args);
+	}
+
+}
+
+```
+
+- incluir as categorias de serviço, criar o @bean CommandLineRunner demo(...), importar as libs do spring e implementar os métodos de services
+```java
+package com.utfpr.backendcategoriamusicasi;
+
+import com.utfpr.backendcategoriamusicasi.entity.Categoria;
+import com.utfpr.backendcategoriamusicasi.entity.Musica;
+import com.utfpr.backendcategoriamusicasi.service.CategoriaService;
+import com.utfpr.backendcategoriamusicasi.service.MusicaService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+
+
+@SpringBootApplication
+public class BackendCategoriaMusicaSiApplication {
+
+	private static final Logger log = LoggerFactory.getLogger(BackendCategoriaMusicaSiApplication.class);
+
+	public static void main(String[] args) {
+		SpringApplication.run(BackendCategoriaMusicaSiApplication.class, args);
+	}
+
+	@Bean
+	public CommandLineRunner demo(CategoriaService service, MusicaService musicaService) {
+		return (args) -> {
+			log.info("");
+			log.info("");
+			log.info("===============Listagem das músicas===============");
+			for (Musica m : musicaService.listarTodasAsMusicas()) {
+				log.info(m.toString());
+			}
+			log.info("");
+			log.info("");
+			log.info("===============Listagem das categorias===============");
+			for (Categoria c : service.listarTodasAsCategorias()) {
+				log.info(c.toString());
+			}
+		};
+	}
+
+
+}
+
+```
+
+- Ao rodar serão listados todos os objetos
