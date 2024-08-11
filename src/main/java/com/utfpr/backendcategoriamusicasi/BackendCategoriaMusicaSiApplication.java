@@ -36,7 +36,40 @@ public class BackendCategoriaMusicaSiApplication {
 			for (Categoria c : service.listarTodasAsCategorias()) {
 				log.info(c.toString());
 			}
+
+			log.info("");
+			log.info("");
+			log.info("===============Somar tempo das musicas===============");
+			musicaService.procAdicioneTempo(1000);
+
+			log.info("");
+			log.info("");
+			log.info("===============Listagem das músicas após a soma===============");
+			for (Musica m : musicaService.listarTodasAsMusicas()) {
+				log.info(m.toString());
+			}
+
+			log.info("");
+			log.info("");
+			log.info("===============Subtrair tempo das musicas===============");
+			musicaService.procSubtraiTempo(1000);
+
+
+			log.info("");
+			log.info("");
+			log.info("===============Listagem das músicas após subtração===============");
+			for (Musica m : musicaService.listarTodasAsMusicas()) {
+				log.info(m.toString());
+			}
+
+
+
+
+
 		};
+
+
+
 	}
 
 

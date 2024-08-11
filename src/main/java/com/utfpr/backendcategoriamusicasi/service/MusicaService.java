@@ -17,4 +17,12 @@ public class MusicaService {
         return repository.findAll();
     }
 
+    public void procAdicioneTempo(Integer tempo){
+        repository.procAdicioneTempo(tempo);
+    }
+
+    public void procSubtraiTempo(Integer tempo){
+        repository.procSubtraiTempo(tempo);
+    }
+
 }

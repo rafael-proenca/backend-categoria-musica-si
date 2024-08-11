@@ -1,5 +1,6 @@
 -- executar no maria db
 -- CREATE OR REPLACE schema dml;
+/*
 CREATE or replace table categoria  (
     cod_categoria integer NOT NULL auto_increment,
     desc_categoria character varying(50)  ,
@@ -14,4 +15,5 @@ CREATE or replace table musica (
     CONSTRAINT musica_pkey PRIMARY KEY (cod_musica),
     CONSTRAINT musica_cod_categoria_fkey FOREIGN KEY (cod_categoria) REFERENCES categoria(cod_categoria)
 );
+*/
 

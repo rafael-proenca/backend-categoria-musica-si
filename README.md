@@ -254,16 +254,34 @@ de dados, mas existir não significa ter que usar em todo projeto
   https://www.baeldung.com/spring-boot-data-sql-and-schema-sql
 
 ## Passo a passo
+- abrir e conectar o mariaDB
 - dropar o banco dml no mariaDB
 - rodar no mariaDB  e atualizar
 ```sql
-CREATE OR REPLACE schema dml;
-```
-- Rodar a aplicação [BackendCategoriaMusicaSiApplication.java](src%2Fmain%2Fjava%2Fcom%2Futfpr%2Fbackendcategoriamusicasi%2FBackendCategoriaMusicaSiApplication.java)
-- Rodar no mariaDB
-```sql
+DROP DATABASE IF EXISTS dml;
+
+CREATE SCHEMA dml;
+
 USE dml;
-Delimiter $$
+
+CREATE TABLE categoria (
+    cod_categoria BIGINT NOT NULL auto_increment,
+    desc_categoria character varying(50)  ,
+     CONSTRAINT categoria_pkey PRIMARY KEY (cod_categoria)
+);
+
+CREATE TABLE musica (
+    cod_musica BIGINT NOT NULL AUTO_INCREMENT,
+    cod_categoria BIGINT NOT NULL,
+    duracao Integer,
+    titulo character varying(100),
+    CONSTRAINT musica_pkey PRIMARY KEY (cod_musica),
+    CONSTRAINT musica_cod_categoria_fkey FOREIGN KEY (cod_categoria) REFERENCES categoria(cod_categoria)
+);
+
+USE dml;
+Delimiter $$;
+
 CREATE PROCEDURE proc_adicione_tempo(IN int_valor INT)
 
 BEGIN
@@ -282,15 +300,81 @@ BEGIN
 END $$;
 DELIMITER ;
 
+/*
 USE dml;
 CALL proc_adicione_tempo(1000); 
 select * from musica;
-```
-- em outra aba 
-```sql
-CALL proc_subtrai_tempo(1000); 
+
+CALL proc_adicione_tempo(1000); 
 select * from musica;
+*/
+
 ```
-Continuar: APOSTILA – IMPLEMENTANDO CHAMADA A
-STORED PROCEDURE
-https://moodle.utfpr.edu.br/course/view.php?id=28404&section=11
+
+- Rodar a aplicação [BackendCategoriaMusicaSiApplication.java](src%2Fmain%2Fjava%2Fcom%2Futfpr%2Fbackendcategoriamusicasi%2FBackendCategoriaMusicaSiApplication.java)
+- obs nessa aplicação o recurso de criação de tabelas schema.sql está comentado justamente para a aplicação não fazer a criação de tavelas, mas descomentando, para projetos futuros, é uma possibilidade
+- mantivemos aqui somente o data.sql ingerindo dados no mariaDB
+
+
+# APOSTILA – IMPLEMENTANDO CHAMADA A STORED PROCEDURE
+No MusicaRepository deve implementar a chamada da stored procedure criada
+no banco de dados usando a anotação @Procedure e informando como valor o
+nome da procedure que está criada no banco de dados.
+[MusicaRepository.java](src%2Fmain%2Fjava%2Fcom%2Futfpr%2Fbackendcategoriamusicasi%2Frepository%2FMusicaRepository.java)
+
+```java
+public interface MusicaRepository extends JpaRepository<Musica,Long> {
+
+    @Procedure("proc_adicione_tempo")
+    void procAdicioneTempo(Integer tempo);
+
+    @Procedure("proc_subtrai_tempo")
+    void procSubtraiTempo(Integer tempo);
+}
+
+```
+- em service [MusicaService.java](src%2Fmain%2Fjava%2Fcom%2Futfpr%2Fbackendcategoriamusicasi%2Fservice%2FMusicaService.java)
+```java
+public class MusicaService {
+
+//...
+    public void procAdicioneTempo(Integer tempo){
+        repository.procAdicioneTempo(tempo);
+    }
+
+    public void procSubtraiTempo(Integer tempo){
+        repository.procSubtraiTempo(tempo);
+    }
+
+}
+```
+- e na aplicação raiz com commandLineRunner podemos testar a aplicação
+```java
+//...
+log.info("");
+log.info("");
+log.info("===============Somar tempo das musicas===============");
+musicaService.procAdicioneTempo(1000);
+
+log.info("");
+log.info("");
+log.info("===============Listagem das músicas após a soma===============");
+for (Musica m : musicaService.listarTodasAsMusicas()) {
+    log.info(m.toString());
+}
+
+log.info("");
+log.info("");
+log.info("===============Subtrair tempo das musicas===============");
+musicaService.procSubtraiTempo(1000);
+
+
+log.info("");
+log.info("");
+log.info("===============Listagem das músicas após subtração===============");
+for (Musica m : musicaService.listarTodasAsMusicas()) {
+    log.info(m.toString());
+} 
+```
+
+- ver também https://www.devmedia.com.br/stored-procedures-no-mysql/29030
