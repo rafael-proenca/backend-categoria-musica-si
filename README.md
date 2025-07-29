@@ -2,7 +2,7 @@
 
 # backend-categoria-musica-si
 Repositório destinado ao estudo da disciplina Banco de dados da pós em java da UTFPR
-- [link da disciplina](https://github.com/Cyber-Barbarian/estudo-java-utfpr-rafael)
+- [link da disciplina - Privado](https://github.com/rafael-proenca/estudo-java-utfpr-rafael/blob/main/BancoDeDados/src/main/resources/Atividade02E03JPA/ResumoJPA.md)
 - [link do repositório](https://github.com/Cyber-Barbarian/backend-categoria-musica-si)
 
 # Atividade projeto Spring JPA
